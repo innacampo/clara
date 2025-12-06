@@ -1,0 +1,5 @@
+{
+  "name": "CLARA - Clinical Logic Auditor",
+  "description": "An AI-powered system designed to audit clinical consultations for cognitive biases such as Diagnostic Shadowing and Premature Closure to improve patient safety.",
+  "requestFramePermissions": []
+}
