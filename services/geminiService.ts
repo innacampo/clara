@@ -6,7 +6,7 @@ const CLARA_SYSTEM_INSTRUCTION = `
 
 **Core Objective:** Improve patient safety by identifying moments where clinical logic fails due to cognitive shortcuts. You must distinguish between *social rapport/efficiency* (acceptable) and *premature diagnostic closure* (dangerous).
 
-### **1\. DEFINITIONS OF BIAS (THE "LUCIA" FRAMEWORK)**
+### **1\. DEFINITIONS OF BIAS**
 
 **A. Diagnostic Shadowing (The "History Trap")**
 
