@@ -31,11 +31,20 @@ When analyzing the transcript, apply these rules:
 2. **The "Testing Gap":** Flag instances where a diagnosis is made based on *feeling* rather than *data* (e.g., diagnosing a panic attack in a patient with tachycardia without ordering an EKG/ECG).  
 3. **Circular Reasoning:** Flag instances where the history is used as the proof. (e.g., "You are dizzy because you are depressed, and we know you are depressed because you are dizzy.")
 
+### YOUR TASK:
+1. Listen to the provided audio consultation carefully OR read the provided transcript.
+2. If analyzing text, assume the dialogue is verbatim.
+3. If analyzing audio, identify specific timestamps. If analyzing text without timestamps, use "00:00" or approximate progression.
+
 ### OUTPUT:
 Return ONLY the JSON object matching the schema provided.
 `;
 
-export const analyzeConsultationAudio = async (base64Audio: string, mimeType: string): Promise<AnalysisResponse> => {
+export type AnalysisInput = 
+  | { type: 'audio'; data: string; mimeType: string }
+  | { type: 'text'; text: string };
+
+export const analyzeConsultation = async (input: AnalysisInput): Promise<AnalysisResponse> => {
   const apiKey = process.env.API_KEY;
   if (!apiKey) {
     throw new Error("API Key not found in environment variables");
@@ -75,19 +84,18 @@ export const analyzeConsultationAudio = async (base64Audio: string, mimeType: st
     required: ["audit_flags"],
   };
 
+  const contentPart = input.type === 'audio' 
+    ? { inlineData: { mimeType: input.mimeType, data: input.data } }
+    : { text: `TRANSCRIPT FOR ANALYSIS:\n\n${input.text}` };
+
   try {
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: {
         parts: [
+          contentPart,
           {
-            inlineData: {
-              mimeType: mimeType,
-              data: base64Audio,
-            },
-          },
-          {
-            text: "Analyze this clinical consultation audio for cognitive biases.",
+            text: "Analyze this clinical consultation for cognitive biases according to the system instructions.",
           },
         ],
       },

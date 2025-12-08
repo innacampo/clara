@@ -30,4 +30,5 @@ export interface AnalysisState {
   result?: AnalysisResponse;
   fileName?: string;
   audioUrl?: string;
+  transcript?: string;
 }

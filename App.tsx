@@ -1,10 +1,47 @@
 import React, { useState } from 'react';
-import { BrainCircuit, Loader2, Play, AlertOctagon, RotateCcw } from 'lucide-react';
+import { BrainCircuit, Loader2, Play, AlertOctagon, RotateCcw, FileText, ArrowRight } from 'lucide-react';
 import { AnalysisState, BiasType, RiskLevel } from './types';
-import { analyzeConsultationAudio, fileToBase64 } from './services/geminiService';
+import { analyzeConsultation, fileToBase64 } from './services/geminiService';
 import FileUpload from './components/FileUpload';
 import AuditCard from './components/AuditCard';
 import RiskChart from './components/RiskChart';
+
+const SAMPLE_CASES = [
+  {
+    id: 'bias',
+    title: 'Case Study: "The Anxiety Label"',
+    description: 'Patient presents with dizziness and syncope. History of Generalized Anxiety Disorder.',
+    badge: 'Contains Bias',
+    badgeColor: 'bg-red-100 text-red-700',
+    text: `Dr: Good morning Elena. I see you're here for dizziness?
+Elena: Yes doctor, it's been happening for a week. I was at the grocery store yesterday and I actually had to grab the shelf because the room started spinning. My heart was pounding out of my chest.
+Dr: Mhm. And looking at your chart here, I see we've been managing your generalized anxiety disorder for a few years now. Have you been taking your meds?
+Elena: Yes, I take them every day. But this feels different. It wasn't like a panic attack. I wasn't anxious before it happened. I just stood up and...
+Dr: You know, anxiety can manifest in really physical ways Elena. Even if you don't feel worried in the moment, your body holds on to stress. Have things been stressful at work?
+Elena: Well, sure, work is busy but I actually blacked out for a second. That's never happened with my anxiety before.
+Dr: Palpitations and lightheadedness are classic signs of a panic spiral. When we hyperventilate, we get dizzy. I think what's happening here is a flare up of the GAD.
+Elena: So you don't think it's my heart?
+Dr: I think if we get your anxiety back under control, the dizziness will stop. Let's bump up your dosage and try some breathing exercises. If you're still feeling this way in a month, give us a call.`
+  },
+  {
+    id: 'safe',
+    title: 'Case Study: "Safety First"',
+    description: 'Same patient presentation, but handled with objective investigation.',
+    badge: 'Safe Practice',
+    badgeColor: 'bg-emerald-100 text-emerald-700',
+    text: `Dr: Good morning Elena. I see you're here for some dizziness?
+Elena: Yes doctor. It's been happening for a week. I was at the grocery store yesterday and I actually had to grab the shelf because the room started spinning. My heart was pounding out of my chest.
+Dr: That sounds frightening. Did you lose consciousness completely or did it just feel like you might?
+Elena: I think I blacked out for just a second. I don't remember hitting the floor, but I was definitely out of it.
+Dr: Okay. I see in your chart you have a history of generalized anxiety disorder. I know palpitations can sometimes be part of that. Does this feel like your usual panic attacks?
+Elena: No, that's the thing. I wasn't anxious. I just reached for a box of cereal and boom, down I went.
+Dr: Hmm. Okay. While anxiety can certainly cause physical symptoms, losing consciousness, what we call syncope, needs to be investigated on its own first.
+Elena: So you don't think it's just stress?
+Dr: We can't assume that yet. Passing out isn't a typical panic symptom without hyperventilating first. I want to do an ECG right now to check your heart rhythm, and we're going to check your blood pressure while you're laying down and standing up.
+Elena: Okay, that makes me feel better.
+Dr: Let's rule out the physical causes. If the heart and blood work come back clear, then we can discuss if stress is playing a role. But safety first.`
+  }
+];
 
 function App() {
   const [state, setState] = useState<AnalysisState>({
@@ -17,7 +54,8 @@ function App() {
       setState({ 
         status: 'uploading', 
         fileName: file.name,
-        audioUrl 
+        audioUrl,
+        transcript: undefined
       });
 
       // Prepare file for API
@@ -25,8 +63,36 @@ function App() {
       
       setState(prev => ({ ...prev, status: 'processing' }));
 
-      // Call Gemini API
-      const result = await analyzeConsultationAudio(base64, file.type);
+      // Call Gemini API with audio
+      const result = await analyzeConsultation({ type: 'audio', data: base64, mimeType: file.type });
+      
+      setState(prev => ({ 
+        ...prev, 
+        status: 'complete',
+        result
+      }));
+
+    } catch (error: any) {
+      console.error(error);
+      setState(prev => ({ 
+        ...prev, 
+        status: 'error', 
+        error: error.message || "An unexpected error occurred during analysis."
+      }));
+    }
+  };
+
+  const handleSampleSelect = async (sample: typeof SAMPLE_CASES[0]) => {
+    try {
+      setState({ 
+        status: 'processing', 
+        fileName: sample.title,
+        audioUrl: undefined,
+        transcript: sample.text
+      });
+
+      // Call Gemini API with text
+      const result = await analyzeConsultation({ type: 'text', text: sample.text });
       
       setState(prev => ({ 
         ...prev, 
@@ -90,8 +156,31 @@ function App() {
             </div>
             
             <FileUpload onFileSelect={handleFileSelect} disabled={false} />
+
+            {/* Sample Cases */}
+            <div className="border-t border-slate-200 pt-8">
+               <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-6 text-center">Or test with a sample case</h3>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {SAMPLE_CASES.map((sample) => (
+                    <button 
+                      key={sample.id}
+                      onClick={() => handleSampleSelect(sample)}
+                      className="text-left bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all group relative overflow-hidden"
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <span className={`text-[10px] uppercase font-bold px-2 py-1 rounded-full ${sample.badgeColor}`}>
+                          {sample.badge}
+                        </span>
+                        <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-500 transition-colors" />
+                      </div>
+                      <h4 className="font-semibold text-slate-800 mb-1 group-hover:text-indigo-700 transition-colors">{sample.title}</h4>
+                      <p className="text-sm text-slate-500 leading-relaxed">{sample.description}</p>
+                    </button>
+                  ))}
+               </div>
+            </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
               <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
                 <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mb-4">
                   <span className="font-bold text-purple-600">DS</span>
@@ -160,7 +249,11 @@ function App() {
             <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-4 w-full md:w-auto">
                 <div className="bg-indigo-50 p-2 rounded-full">
-                   <Play className="w-5 h-5 text-indigo-600 fill-indigo-600" />
+                   {state.audioUrl ? (
+                     <Play className="w-5 h-5 text-indigo-600 fill-indigo-600" />
+                   ) : (
+                     <FileText className="w-5 h-5 text-indigo-600" />
+                   )}
                 </div>
                 <div>
                   <h3 className="font-medium text-slate-900 truncate max-w-[200px]">{state.fileName}</h3>
@@ -177,6 +270,9 @@ function App() {
                   className="text-sm text-slate-500 hover:text-indigo-600 font-medium px-3 py-2"
                 >
                   Analyze New File
+                </button>
+                 <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                  Export PDF Report
                 </button>
               </div>
             </div>
@@ -207,6 +303,19 @@ function App() {
                         </p>
                       </div>
                    </div>
+                )}
+                
+                {/* Transcript Viewer for Samples */}
+                {state.transcript && (
+                  <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                    <h3 className="text-sm font-bold text-slate-500 uppercase mb-4 flex items-center gap-2">
+                      <FileText className="w-4 h-4" />
+                      Consultation Transcript
+                    </h3>
+                    <div className="bg-slate-50 p-4 rounded-lg text-sm text-slate-700 font-mono whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto border border-slate-200">
+                      {state.transcript}
+                    </div>
+                  </div>
                 )}
 
                 {/* Audit Stream */}
