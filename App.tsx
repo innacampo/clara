@@ -256,7 +256,7 @@ function App() {
                    )}
                 </div>
                 <div>
-                  <h3 className="font-medium text-slate-900 truncate max-w-[200px]">{state.fileName}</h3>
+                  <h3 className="font-medium text-slate-900 truncate max-w-[500px]">{state.fileName}</h3>
                   <p className="text-xs text-slate-500">Analysis Complete</p>
                 </div>
                 {state.audioUrl && (
