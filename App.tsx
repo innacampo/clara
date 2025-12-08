@@ -336,13 +336,6 @@ function App() {
               {/* Sidebar */}
               <div className="md:col-span-1 space-y-6">
                  <RiskChart flags={state.result.audit_flags} />
-                 
-                 <div className="bg-indigo-900 text-white p-6 rounded-xl">
-                    <h4 className="font-semibold mb-2">CLARA Insights</h4>
-                    <p className="text-indigo-200 text-sm">
-                      Common pattern detected: <strong>Premature Closure</strong> often occurs within the first 3 minutes of a consultation.
-                    </p>
-                 </div>
               </div>
             </div>
           </div>
