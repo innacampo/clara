@@ -12,7 +12,7 @@ const SAMPLE_CASES = [
     title: 'Case Study: "The Anxiety Label"',
     description: 'Patient presents with dizziness and syncope. History of Generalized Anxiety Disorder.',
     badge: 'Contains Bias',
-    badgeColor: 'bg-red-100 text-red-700',
+    badgeColor: 'bg-red-900/30 text-red-400 border border-red-800/50',
     text: `Dr: Good morning Elena. I see you're here for dizziness?
 Elena: Yes doctor, it's been happening for a week. I was at the grocery store yesterday and I actually had to grab the shelf because the room started spinning. My heart was pounding out of my chest.
 Dr: Mhm. And looking at your chart here, I see we've been managing your generalized anxiety disorder for a few years now. Have you been taking your meds?
@@ -28,7 +28,7 @@ Dr: I think if we get your anxiety back under control, the dizziness will stop. 
     title: 'Case Study: "Safety First"',
     description: 'Same patient presentation, but handled with objective investigation.',
     badge: 'Safe Practice',
-    badgeColor: 'bg-emerald-100 text-emerald-700',
+    badgeColor: 'bg-cyan-900/30 text-cyan-400 border border-cyan-800/50',
     text: `Dr: Good morning Elena. I see you're here for some dizziness?
 Elena: Yes doctor. It's been happening for a week. I was at the grocery store yesterday and I actually had to grab the shelf because the room started spinning. My heart was pounding out of my chest.
 Dr: That sounds frightening. Did you lose consciousness completely or did it just feel like you might?
@@ -122,22 +122,22 @@ function App() {
   const totalIssues = state.result?.audit_flags.length || 0;
   
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-20">
+    <div className="min-h-screen bg-[#0B1221] text-slate-100 pb-20 selection:bg-cyan-500/30 selection:text-cyan-200">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
+      <header className="bg-[#0B1221]/80 backdrop-blur-md border-b border-cyan-900/30 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="bg-indigo-600 p-2 rounded-lg">
-              <BrainCircuit className="w-6 h-6 text-white" />
+          <div className="flex items-center gap-3">
+            <div className="bg-cyan-500/10 border border-cyan-500/50 p-2 rounded-lg shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+              <BrainCircuit className="w-6 h-6 text-cyan-400" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-slate-900 leading-none">CLARA</h1>
-              <p className="text-xs text-slate-500 font-medium tracking-wide">CLINICAL LOGIC AUDITOR</p>
+              <h1 className="text-xl font-bold text-slate-50 leading-none tracking-tight">CLARA</h1>
+              <p className="text-[10px] text-cyan-400 font-mono tracking-[0.2em] uppercase mt-1 opacity-80">Clinical Logic Auditor</p>
             </div>
           </div>
           <div className="hidden md:block">
-            <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold">
-               v1.0.0 Beta
+            <span className="bg-slate-900/50 border border-cyan-900/50 text-cyan-400 px-3 py-1 rounded-full text-xs font-mono">
+               v1.0.0_BETA
             </span>
           </div>
         </div>
@@ -149,58 +149,58 @@ function App() {
         {state.status === 'idle' && (
           <div className="max-w-3xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="text-center space-y-4">
-              <h2 className="text-3xl font-bold text-slate-900">Cognitive Bias Detection for Patient Safety</h2>
-              <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-                Upload a consultation recording to detect Diagnostic Shadowing, Premature Closure, and Anchoring Bias in clinical reasoning.
+              <h2 className="text-3xl font-bold text-white tracking-tight">Cognitive Bias Detection for Patient Safety</h2>
+              <p className="text-lg text-slate-400 max-w-2xl mx-auto font-light">
+                Upload a consultation recording to detect <span className="text-cyan-400 font-medium">Diagnostic Shadowing</span>, <span className="text-cyan-400 font-medium">Premature Closure</span>, and <span className="text-cyan-400 font-medium">Anchoring Bias</span> in clinical reasoning.
               </p>
             </div>
             
             <FileUpload onFileSelect={handleFileSelect} disabled={false} />
 
             {/* Sample Cases */}
-            <div className="border-t border-slate-200 pt-8">
-               <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-6 text-center">Or test with a sample case</h3>
+            <div className="border-t border-slate-800/50 pt-8">
+               <h3 className="text-xs font-bold text-slate-500 font-mono uppercase tracking-widest mb-6 text-center">System Calibration // Sample Cases</h3>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {SAMPLE_CASES.map((sample) => (
                     <button 
                       key={sample.id}
                       onClick={() => handleSampleSelect(sample)}
-                      className="text-left bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all group relative overflow-hidden"
+                      className="text-left bg-slate-900/40 backdrop-blur-sm p-5 rounded-xl border border-slate-800 hover:border-cyan-500/50 hover:shadow-[0_0_20px_rgba(6,182,212,0.1)] transition-all group relative overflow-hidden"
                     >
-                      <div className="flex justify-between items-start mb-2">
-                        <span className={`text-[10px] uppercase font-bold px-2 py-1 rounded-full ${sample.badgeColor}`}>
+                      <div className="flex justify-between items-start mb-3">
+                        <span className={`text-[10px] uppercase font-mono tracking-wider font-bold px-2 py-1 rounded ${sample.badgeColor}`}>
                           {sample.badge}
                         </span>
-                        <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-500 transition-colors" />
+                        <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-cyan-400 transition-colors" />
                       </div>
-                      <h4 className="font-semibold text-slate-800 mb-1 group-hover:text-indigo-700 transition-colors">{sample.title}</h4>
-                      <p className="text-sm text-slate-500 leading-relaxed">{sample.description}</p>
+                      <h4 className="font-semibold text-slate-200 mb-1 group-hover:text-cyan-300 transition-colors">{sample.title}</h4>
+                      <p className="text-sm text-slate-400 leading-relaxed">{sample.description}</p>
                     </button>
                   ))}
                </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                  <span className="font-bold text-purple-600">DS</span>
+              <div className="bg-slate-900/30 p-6 rounded-xl border border-slate-800">
+                <div className="w-10 h-10 bg-purple-900/20 border border-purple-500/30 rounded-lg flex items-center justify-center mb-4">
+                  <span className="font-bold font-mono text-purple-400">DS</span>
                 </div>
-                <h3 className="font-semibold mb-2">Diagnostic Shadowing</h3>
-                <p className="text-sm text-slate-500">Detects when physical symptoms are misattributed to psychiatric history.</p>
+                <h3 className="font-semibold text-slate-200 mb-2">Diagnostic Shadowing</h3>
+                <p className="text-sm text-slate-400">Detects when physical symptoms are misattributed to psychiatric history.</p>
               </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                <div className="w-10 h-10 bg-rose-100 rounded-full flex items-center justify-center mb-4">
-                  <span className="font-bold text-rose-600">PC</span>
+              <div className="bg-slate-900/30 p-6 rounded-xl border border-slate-800">
+                <div className="w-10 h-10 bg-rose-900/20 border border-rose-500/30 rounded-lg flex items-center justify-center mb-4">
+                  <span className="font-bold font-mono text-rose-400">PC</span>
                 </div>
-                <h3 className="font-semibold mb-2">Premature Closure</h3>
-                <p className="text-sm text-slate-500">Identifies when a diagnosis is made before ruling out serious alternatives.</p>
+                <h3 className="font-semibold text-slate-200 mb-2">Premature Closure</h3>
+                <p className="text-sm text-slate-400">Identifies when a diagnosis is made before ruling out serious alternatives.</p>
               </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                  <span className="font-bold text-blue-600">AB</span>
+              <div className="bg-slate-900/30 p-6 rounded-xl border border-slate-800">
+                <div className="w-10 h-10 bg-blue-900/20 border border-blue-500/30 rounded-lg flex items-center justify-center mb-4">
+                  <span className="font-bold font-mono text-blue-400">AB</span>
                 </div>
-                <h3 className="font-semibold mb-2">Anchoring Bias</h3>
-                <p className="text-sm text-slate-500">Flags reliance on initial information despite contradictory evidence.</p>
+                <h3 className="font-semibold text-slate-200 mb-2">Anchoring Bias</h3>
+                <p className="text-sm text-slate-400">Flags reliance on initial information despite contradictory evidence.</p>
               </div>
             </div>
           </div>
@@ -208,19 +208,20 @@ function App() {
 
         {/* Processing States */}
         {(state.status === 'uploading' || state.status === 'processing') && (
-          <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-6">
+          <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-8">
             <div className="relative">
-              <div className="w-20 h-20 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
+              <div className="w-24 h-24 border-t-2 border-l-2 border-cyan-500/80 rounded-full animate-spin"></div>
+              <div className="w-24 h-24 border-b-2 border-r-2 border-cyan-900/30 rounded-full animate-spin absolute inset-0 reverse-spin"></div>
               <div className="absolute inset-0 flex items-center justify-center">
-                <BrainCircuit className="w-8 h-8 text-indigo-600 animate-pulse" />
+                <BrainCircuit className="w-10 h-10 text-cyan-400 animate-pulse drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
               </div>
             </div>
-            <div className="text-center">
-              <h3 className="text-xl font-semibold text-slate-800">
-                {state.status === 'uploading' ? 'Uploading Audio...' : 'Analyzing Clinical Reasoning...'}
+            <div className="text-center space-y-2">
+              <h3 className="text-xl font-bold text-slate-100 tracking-wide">
+                {state.status === 'uploading' ? 'UPLOADING DATA STREAM...' : 'ANALYZING CLINICAL LOGIC...'}
               </h3>
-              <p className="text-slate-500 mt-2">
-                CLARA is listening for logical fallacies. This may take a moment.
+              <p className="text-cyan-400/70 font-mono text-sm">
+                System is parsing dialogue for logical fallacies
               </p>
             </div>
           </div>
@@ -228,16 +229,16 @@ function App() {
 
         {/* Error State */}
         {state.status === 'error' && (
-          <div className="max-w-2xl mx-auto mt-12 bg-red-50 border border-red-200 rounded-xl p-8 text-center">
-            <AlertOctagon className="w-12 h-12 text-red-500 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-red-800 mb-2">Analysis Failed</h3>
-            <p className="text-red-600 mb-6">{state.error}</p>
+          <div className="max-w-2xl mx-auto mt-12 bg-red-950/20 border border-red-500/50 rounded-xl p-8 text-center backdrop-blur-sm">
+            <AlertOctagon className="w-12 h-12 text-red-500 mx-auto mb-4 drop-shadow-[0_0_10px_rgba(239,68,68,0.4)]" />
+            <h3 className="text-lg font-bold text-red-400 mb-2 tracking-wide uppercase">Analysis Failed</h3>
+            <p className="text-red-300/80 mb-6 font-mono text-sm">{state.error}</p>
             <button 
               onClick={handleReset}
-              className="inline-flex items-center gap-2 bg-white border border-red-200 text-red-700 px-4 py-2 rounded-lg font-medium hover:bg-red-50 transition-colors"
+              className="inline-flex items-center gap-2 bg-red-900/20 border border-red-500/50 text-red-400 px-6 py-2 rounded-lg font-medium hover:bg-red-900/40 hover:text-red-300 transition-all uppercase tracking-wider text-sm"
             >
               <RotateCcw className="w-4 h-4" />
-              Try Again
+              Reset System
             </button>
           </div>
         )}
@@ -246,28 +247,28 @@ function App() {
         {state.status === 'complete' && state.result && (
           <div className="space-y-6 animate-in fade-in duration-500">
             {/* Control Bar */}
-            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="bg-slate-900/60 backdrop-blur-md p-4 rounded-xl border border-cyan-900/30 flex flex-col md:flex-row items-center justify-between gap-4 shadow-lg">
               <div className="flex items-center gap-4 w-full md:w-auto">
-                <div className="bg-indigo-50 p-2 rounded-full">
+                <div className="bg-cyan-500/10 p-2 rounded-lg border border-cyan-500/30">
                    {state.audioUrl ? (
-                     <Play className="w-5 h-5 text-indigo-600 fill-indigo-600" />
+                     <Play className="w-5 h-5 text-cyan-400 fill-cyan-400" />
                    ) : (
-                     <FileText className="w-5 h-5 text-indigo-600" />
+                     <FileText className="w-5 h-5 text-cyan-400" />
                    )}
                 </div>
                 <div>
-                  <h3 className="font-medium text-slate-900 truncate max-w-[500px]">{state.fileName}</h3>
-                  <p className="text-xs text-slate-500">Analysis Complete</p>
+                  <h3 className="font-medium text-slate-200 truncate max-w-[500px]">{state.fileName}</h3>
+                  <p className="text-[10px] uppercase font-mono text-cyan-400/70 tracking-wider">Analysis Complete</p>
                 </div>
                 {state.audioUrl && (
-                  <audio controls className="h-8 ml-4 w-64 hidden md:block" src={state.audioUrl} />
+                  <audio controls className="h-8 ml-4 w-64 hidden md:block opacity-80 invert hue-rotate-180" src={state.audioUrl} />
                 )}
               </div>
               
               <div className="flex gap-3">
                  <button 
                   onClick={handleReset}
-                  className="text-sm text-slate-500 hover:text-indigo-600 font-medium px-3 py-2"
+                  className="text-xs font-mono text-slate-400 hover:text-cyan-400 uppercase tracking-widest px-3 py-2 transition-colors border border-transparent hover:border-cyan-900/50 rounded"
                 >
                   Analyze New File
                 </button>
@@ -280,22 +281,23 @@ function App() {
                 
                 {/* High Level Alert */}
                 {highRiskCount > 0 ? (
-                   <div className="bg-red-50 border border-red-200 rounded-xl p-6 flex items-start gap-4">
-                      <AlertOctagon className="w-8 h-8 text-red-600 flex-shrink-0 mt-1" />
-                      <div>
-                        <h3 className="text-lg font-bold text-red-800">High Risk Bias Detected</h3>
-                        <p className="text-red-700 mt-1">
-                          CLARA identified {highRiskCount} high-risk logical failures that may impact patient safety. 
+                   <div className="bg-red-950/20 border border-red-500/40 rounded-xl p-6 flex items-start gap-4 shadow-[0_0_20px_rgba(239,68,68,0.1)] relative overflow-hidden">
+                      <div className="absolute inset-0 bg-red-500/5 animate-pulse"></div>
+                      <AlertOctagon className="w-8 h-8 text-red-500 flex-shrink-0 mt-1 relative z-10" />
+                      <div className="relative z-10">
+                        <h3 className="text-lg font-bold text-red-400 tracking-tight">High Risk Bias Detected</h3>
+                        <p className="text-red-200/70 mt-1 font-light">
+                          CLARA identified <span className="font-mono font-bold text-red-400">{highRiskCount}</span> high-risk logical failures that may impact patient safety. 
                           Immediate review of the consultation timeline is recommended.
                         </p>
                       </div>
                    </div>
                 ) : (
-                  <div className="bg-green-50 border border-green-200 rounded-xl p-6 flex items-start gap-4">
-                      <BrainCircuit className="w-8 h-8 text-green-600 flex-shrink-0 mt-1" />
+                  <div className="bg-emerald-950/20 border border-emerald-500/40 rounded-xl p-6 flex items-start gap-4 shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+                      <BrainCircuit className="w-8 h-8 text-emerald-500 flex-shrink-0 mt-1" />
                       <div>
-                        <h3 className="text-lg font-bold text-green-800">Reasoning appears robust</h3>
-                        <p className="text-green-700 mt-1">
+                        <h3 className="text-lg font-bold text-emerald-400 tracking-tight">Reasoning appears robust</h3>
+                        <p className="text-emerald-200/70 mt-1 font-light">
                           No high-risk cognitive biases were detected in this sample.
                         </p>
                       </div>
@@ -304,12 +306,12 @@ function App() {
                 
                 {/* Transcript Viewer for Samples */}
                 {state.transcript && (
-                  <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-                    <h3 className="text-sm font-bold text-slate-500 uppercase mb-4 flex items-center gap-2">
+                  <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6 backdrop-blur-sm">
+                    <h3 className="text-xs font-bold text-cyan-500/70 uppercase tracking-widest mb-4 flex items-center gap-2 font-mono">
                       <FileText className="w-4 h-4" />
                       Consultation Transcript
                     </h3>
-                    <div className="bg-slate-50 p-4 rounded-lg text-sm text-slate-700 font-mono whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto border border-slate-200">
+                    <div className="bg-black/30 p-4 rounded-lg text-sm text-slate-300 font-mono whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto border border-slate-800 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
                       {state.transcript}
                     </div>
                   </div>
@@ -317,9 +319,9 @@ function App() {
 
                 {/* Audit Stream */}
                 <div>
-                  <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                  <h3 className="text-lg font-bold text-slate-200 mb-4 flex items-center gap-3">
                     Audit Log
-                    <span className="bg-slate-200 text-slate-600 text-xs px-2 py-0.5 rounded-full">{totalIssues} Events</span>
+                    <span className="bg-cyan-950 border border-cyan-800 text-cyan-400 font-mono text-[10px] px-2 py-0.5 rounded uppercase tracking-wider">{totalIssues} Events</span>
                   </h3>
                   <div className="space-y-4">
                     {state.result.audit_flags.map((flag, idx) => (

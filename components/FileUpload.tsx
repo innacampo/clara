@@ -26,8 +26,8 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, disabled }) => {
       onClick={handleClick}
       className={`
         border-2 border-dashed rounded-xl p-12 flex flex-col items-center justify-center 
-        transition-all duration-300 cursor-pointer
-        ${disabled ? 'opacity-50 cursor-not-allowed bg-slate-50 border-slate-200' : 'border-indigo-200 bg-white hover:border-indigo-400 hover:bg-indigo-50 hover:shadow-sm'}
+        transition-all duration-300 cursor-pointer backdrop-blur-sm relative overflow-hidden group
+        ${disabled ? 'opacity-50 cursor-not-allowed bg-slate-900/20 border-slate-700' : 'border-cyan-800/40 bg-slate-900/40 hover:border-cyan-400/60 hover:bg-slate-900/60 hover:shadow-[0_0_20px_rgba(34,211,238,0.1)]'}
       `}
     >
       <input 
@@ -39,17 +39,23 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, disabled }) => {
         disabled={disabled}
       />
       
-      <div className="bg-indigo-100 p-4 rounded-full mb-4">
-        <Upload className="w-8 h-8 text-indigo-600" />
+      {/* Circuit lines decorative elements */}
+      <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyan-500/30 rounded-tl-lg group-hover:border-cyan-400 transition-colors"></div>
+      <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-cyan-500/30 rounded-tr-lg group-hover:border-cyan-400 transition-colors"></div>
+      <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-cyan-500/30 rounded-bl-lg group-hover:border-cyan-400 transition-colors"></div>
+      <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-cyan-500/30 rounded-br-lg group-hover:border-cyan-400 transition-colors"></div>
+
+      <div className="bg-cyan-500/10 p-4 rounded-full mb-4 border border-cyan-500/20 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_15px_rgba(34,211,238,0.2)]">
+        <Upload className="w-8 h-8 text-cyan-400" />
       </div>
       
-      <h3 className="text-lg font-semibold text-slate-800 mb-2">Upload Consultation Audio</h3>
-      <p className="text-slate-500 text-center max-w-md">
+      <h3 className="text-lg font-bold text-slate-200 mb-2 tracking-wide">Upload Consultation Audio</h3>
+      <p className="text-slate-400 text-center max-w-md font-light">
         Select an MP3 or WAV file of a doctor-patient interaction. 
         CLARA will process this securely to identify clinical logic risks.
       </p>
       
-      <div className="mt-6 flex items-center gap-2 text-xs text-slate-400 uppercase tracking-wider font-medium">
+      <div className="mt-6 flex items-center gap-2 text-xs text-cyan-600/70 font-mono uppercase tracking-widest font-bold">
         <FileAudio className="w-4 h-4" />
         <span>Supports MP3, WAV, AAC</span>
       </div>
