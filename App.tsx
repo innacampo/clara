@@ -137,7 +137,6 @@ function App() {
           </div>
           <div className="hidden md:block">
             <span className="bg-slate-900/50 border border-cyan-900/50 text-cyan-400 px-3 py-1 rounded-full text-xs font-mono">
-               v1.0.0_BETA
             </span>
           </div>
         </div>
