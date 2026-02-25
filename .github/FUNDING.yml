@@ -1,0 +1,18 @@
+# Funding configuration for GitHub Sponsors and other supported platforms.
+# See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-funding-links
+# Add or uncomment the entries you want to expose on the repository page.
+
+# GitHub Sponsors usernames (array or string)
+github: ["innacampo"]
+
+# Third‑party donation platforms (only one value per platform):
+#   patreon: "your-patreon-username"
+#   open_collective: "your-collective-name"
+#   ko_fi: "your-ko-fi-username"
+#   liberapay: "your-liberapay-username"
+#   community_bridge: "your-community-bridge-username"
+#   tidelift: "your-tidelift-package-name"
+#   custom: "https://example.com/donate"
+
+# Example with just a GitHub sponsor link:
+# github: "innacampo"
