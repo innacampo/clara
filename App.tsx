@@ -132,7 +132,7 @@ function App() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-slate-50 leading-none tracking-tight">CLARA</h1>
-              <p className="text-[10px] text-cyan-400 font-mono tracking-[0.2em] uppercase mt-1 opacity-80">Clinical Logic Auditor</p>
+              <p className="text-[10px] text-cyan-400 font-mono tracking-[0.2em] uppercase mt-1 opacity-80">Clinical Logic Assistant</p>
             </div>
           </div>
           <div className="hidden md:block">

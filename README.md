@@ -1,46 +1,39 @@
-# CLARA: AI's Life-Saving Intervention
+# **CLARA: AI's Life-Saving Intervention**
 
-**Clinical Logic Assessment & Reasoning Auditor**
+**Clinical Logic Assessment & Reasoning Assistant**
 
-CLARA is a multimodal AI safety net dedicated to safeguarding clinical reasoning and detecting diagnostic shadowing before it harms patient care.
+CLARA is a multimodal AI safety net dedicated to supporting clinical reasoning and helping identify diagnostic shadowing to optimize patient care.
 
----
+## **The Problem: Cognitive Load & System Strain**
 
-## The Problem: Cognitive Load & System Strain
+* Diagnostic error impacts **12 million Americans annually** \[1\].  
+* In women's health, the crisis is more severe: women are diagnosed an average **4 years later than men** \[2\].  
+* A major factor is **Diagnostic Shadowing** \[3\]: the tendency to inadvertently attribute physical symptoms to psychiatric history.  
+* This is a recognized systemic issue-it's the result of **Dual Process Theory** being strained under immense clinical pressure.  
+  * Physicians operating under high cognitive load are forced to rely on **System 1** (fast/heuristic thinking) just to keep up.  
+  * The analytical **System 2** can be inadvertently bypassed, allowing necessary cognitive shortcuts to occasionally result in unintended clinical blind spots \[4\].
 
-- Diagnostic error impacts **12 million Americans annually** [1].
-- In women's health, the crisis is more severe: women are diagnosed an average **4 years later than men** [2].
-- A major factor is **Diagnostic Shadowing** [3]: the tendency to attribute physical symptoms to psychiatric history.
-- This isn't typically negligence—it's the result of **Dual Process Theory** breaking down under pressure.
-  - Physicians under high cognitive load default to **System 1** (fast/heuristic thinking).  
-  - The analytical **System 2** is bypassed, allowing harmless shortcuts to evolve into dangerous biases [4].
+## **The Solution: A Cognitive Support Strategy**
 
----
+CLARA is built as an **"External System 2"**-a background AI ally powered by **Gemini 3 Pro**.
 
-## The Solution: A Cognitive Forcing Strategy
+* **Not just a scribe.** Rather than merely transcribing conversations, CLARA supports the **reasoning process** behind the encounter.  
+* Functions as a **safety net**, continuously running in the background to reduce physician cognitive burden.  
+* Highlights **potential diagnostic blind spots** and offers gentle clinical nudges for review prior to patient discharge.  
+* Helps physicians maintain their highest standard of clinical accuracy, even when their mental bandwidth is exhausted.
 
-CLARA is built as an **"External System 2"**—a background AI agent powered by **Gemini 3 Pro**.
+## **Methodology & Impact**
 
-- **Not a scribe.** Rather than transcribing conversations, CLARA audits the **logic** of the encounter.
-- Functions as a **safety net**, continuously running behind the scenes.
-- Flags **high‑risk reasoning patterns** for review prior to patient discharge.
-- Helps physicians maintain clinical accuracy even when their mental bandwidth is exhausted.
+* Developed with **Google AI Studio**.  
+* Processes consented consultation audio and outputs standardized **"Clinical Insights" (JSON)**.  
+* Converts subjective reports of being dismissed into objective, actionable data for the care team.  
+* Empowers equitable patient care while reducing cognitive fatigue and systemic risk for providers.
 
----
+## **Getting Started**
 
-## Methodology & Impact
+### **Prerequisites**
 
-- Developed with **Google AI Studio**.
-- Processes consented consultation audio and outputs standardized **"Audit Flags" (JSON)**.
-- Converts subjective reports of being dismissed into objective, actionable data.
-- Protects patients from gender‑based bias while reducing medico‑legal risk for providers.
-
----
-
-## Getting Started
-
-### Prerequisites
-- Node.js (latest LTS recommended)
+* Node.js (latest LTS recommended)
 
 ### Local Setup
 
@@ -49,16 +42,83 @@ CLARA is built as an **"External System 2"**—a background AI agent powered by
    ```bash
    npm install
    ```
-3. Create a `.env.local` file and set your Gemini API key:
+3. Create a `.env` file from the example and set your Gemini API key:
+   ```bash
+   cp .env.example .env
+   ```
    ```env
    GEMINI_API_KEY=your_key_here
    ```
-4. Run the development server:
+4. Run the development server (Vite on `:3000` + Express on `:3001`):
    ```bash
    npm run dev
    ```
 5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+---
+
+## Deploying to Google Cloud Run
+
+The app is packaged as a single Docker container: the Express server serves the
+built Vite frontend and proxies all Gemini calls server-side, so the API key
+**never reaches the browser**.
+
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) installed locally
+- [Google Cloud CLI](https://cloud.google.com/sdk/docs/install) installed and authenticated
+- A Google Cloud project with billing enabled
+
+### One-command deploy (source deploy — no local Docker needed)
+
+```bash
+gcloud run deploy clara \
+  --source . \
+  --region us-central1 \
+  --platform managed \
+  --allow-unauthenticated \
+  --set-env-vars GEMINI_API_KEY=your_key_here
+```
+
+Cloud Run builds the container using the `Dockerfile`, then deploys it. The
+`GEMINI_API_KEY` is stored as a Cloud Run environment variable and is only
+accessible inside the container.
+
+### Optional: use Secret Manager instead of an env var
+
+For production, store the key in Secret Manager so it never appears in deploy
+logs or the Cloud Console UI:
+
+```bash
+# 1. Create the secret (one-time)
+echo -n "your_key_here" | gcloud secrets create GEMINI_API_KEY --data-file=-
+
+# 2. Deploy referencing the secret
+gcloud run deploy clara \
+  --source . \
+  --region us-central1 \
+  --platform managed \
+  --allow-unauthenticated \
+  --set-secrets GEMINI_API_KEY=GEMINI_API_KEY:latest
+```
+
+### Manual build & push (optional)
+
+```bash
+# Build
+docker build -t gcr.io/YOUR_PROJECT_ID/clara .
+
+# Push
+docker push gcr.io/YOUR_PROJECT_ID/clara
+
+# Deploy
+gcloud run deploy clara \
+  --image gcr.io/YOUR_PROJECT_ID/clara \
+  --region us-central1 \
+  --platform managed \
+  --allow-unauthenticated \
+  --set-env-vars GEMINI_API_KEY=your_key_here
+```
 
 ---
 
