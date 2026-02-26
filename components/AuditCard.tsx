@@ -65,7 +65,7 @@ const AuditCard: React.FC<AuditCardProps> = ({ flag }) => {
         <div>
             <h4 className="text-xs font-mono font-bold mb-2 opacity-70 uppercase tracking-wider flex items-center gap-2">
               <span className="w-1.5 h-1.5 bg-current rounded-full"></span>
-              Clinical Reasoning Audit
+              Clinical Reasoning Assistance
             </h4>
             <div className="text-sm opacity-90 leading-relaxed font-mono bg-black/20 p-3 rounded border border-white/5 shadow-inner">
                 {flag.clinical_reasoning}

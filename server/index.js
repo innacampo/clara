@@ -59,7 +59,7 @@ Return ONLY the JSON object matching the schema provided.
 const responseSchema = {
   type: Type.OBJECT,
   properties: {
-    audit_flags: {
+    clinical_insights: {
       type: Type.ARRAY,
       items: {
         type: Type.OBJECT,
@@ -88,7 +88,7 @@ const responseSchema = {
       },
     },
   },
-  required: ['audit_flags'],
+  required: ['clinical_insights'],
 };
 
 // ─── API endpoint ──────────────────────────────────────────────────────────────

@@ -21,7 +21,7 @@ export interface AuditFlag {
 }
 
 export interface AnalysisResponse {
-  audit_flags: AuditFlag[];
+  clinical_insights: AuditFlag[];
 }
 
 export interface AnalysisState {

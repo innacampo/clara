@@ -118,8 +118,8 @@ function App() {
   };
 
   // Safe accessor for stats
-  const highRiskCount = state.result?.audit_flags.filter(f => f.risk_level === RiskLevel.High).length || 0;
-  const totalIssues = state.result?.audit_flags.length || 0;
+  const highRiskCount = state.result?.clinical_insights.filter(f => f.risk_level === RiskLevel.High).length || 0;
+  const totalIssues = state.result?.clinical_insights.length || 0;
   
   return (
     <div className="min-h-screen bg-[#0B1221] text-slate-100 pb-20 selection:bg-cyan-500/30 selection:text-cyan-200">
@@ -319,11 +319,11 @@ function App() {
                 {/* Audit Stream */}
                 <div>
                   <h3 className="text-lg font-bold text-slate-200 mb-4 flex items-center gap-3">
-                    Audit Log
+                    Clinical Insights
                     <span className="bg-cyan-950 border border-cyan-800 text-cyan-400 font-mono text-[10px] px-2 py-0.5 rounded uppercase tracking-wider">{totalIssues} Events</span>
                   </h3>
                   <div className="space-y-4">
-                    {state.result.audit_flags.map((flag, idx) => (
+                    {state.result.clinical_insights.map((flag, idx) => (
                       <AuditCard key={idx} flag={flag} />
                     ))}
                   </div>
@@ -333,7 +333,7 @@ function App() {
 
               {/* Sidebar */}
               <div className="md:col-span-1 space-y-6">
-                 <RiskChart flags={state.result.audit_flags} />
+                 <RiskChart flags={state.result.clinical_insights} />
               </div>
             </div>
           </div>
