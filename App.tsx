@@ -48,7 +48,18 @@ function App() {
     status: 'idle',
   });
 
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 megabytes
+
   const handleFileSelect = async (file: File) => {
+    // enforce size limit before doing anything else
+    if (file.size > MAX_FILE_SIZE) {
+      setState({
+        status: 'error',
+        error: 'Selected file exceeds the 10 MB size limit. Please choose a smaller audio file.',
+      });
+      return;
+    }
+
     try {
       const audioUrl = URL.createObjectURL(file);
       setState({ 
@@ -154,7 +165,7 @@ function App() {
               </p>
             </div>
             
-            <FileUpload onFileSelect={handleFileSelect} disabled={false} />
+            <FileUpload onFileSelect={handleFileSelect} disabled={state.status !== 'idle'} />
 
             {/* Sample Cases */}
             <div className="border-t border-slate-800/50 pt-8">

@@ -51,8 +51,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, disabled }) => {
       
       <h3 className="text-lg font-bold text-slate-200 mb-2 tracking-wide">Upload Consultation Audio</h3>
       <p className="text-slate-400 text-center max-w-md font-light">
-        Select an MP3 or WAV file of a doctor-patient interaction. 
-        CLARA will process this securely to identify clinical logic risks.
+        Select an MP3 or WAV file of a doctor-patient interaction (max 10 MB). 
       </p>
       
       <div className="mt-6 flex items-center gap-2 text-xs text-cyan-600/70 font-mono uppercase tracking-widest font-bold">
