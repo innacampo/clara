@@ -231,7 +231,7 @@ function App() {
                 {state.status === 'uploading' ? 'UPLOADING DATA STREAM...' : 'ANALYZING CLINICAL LOGIC...'}
               </h3>
               <p className="text-cyan-400/70 font-mono text-sm">
-                System is parsing dialogue for logical fallacies
+                Reviewing dialogue to support clinical reasoning
               </p>
             </div>
           </div>
