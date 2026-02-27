@@ -114,11 +114,10 @@ app.post('/api/analyze', async (req, res) => {
   const maxRetries = 4;
   const baseDelay = 500; // ms
   let lastError = null;
-  let response = null;
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       const ai = new GoogleGenAI({ apiKey });
-      response = await ai.models.generateContent({
+      const response = await ai.models.generateContent({
         model: 'gemini-3-pro-preview',
         contents: {
           parts: [
@@ -139,7 +138,9 @@ app.post('/api/analyze', async (req, res) => {
         const result = JSON.parse(response.text);
         return res.json(result);
       } else {
+        // Empty response is not a transient error — no point retrying
         lastError = new Error('No response received from Gemini.');
+        break;
       }
     } catch (error) {
       lastError = error;
@@ -148,9 +149,11 @@ app.post('/api/analyze', async (req, res) => {
         break; // Do not retry on client errors
       }
     }
-    // Exponential backoff
-    const delay = baseDelay * Math.pow(2, attempt);
-    await new Promise(resolve => setTimeout(resolve, delay));
+    // Exponential backoff — skip delay after the final attempt
+    if (attempt < maxRetries - 1) {
+      const delay = baseDelay * Math.pow(2, attempt);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
   }
   console.error('Gemini Analysis Error:', lastError);
   res.status(500).json({ error: lastError?.message || 'Gemini analysis failed.' });
