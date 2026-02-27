@@ -151,7 +151,7 @@ No direct Gemini SDK usage exists on the client — all LLM calls are proxied th
 1. **Validation:** Checks for `GEMINI_API_KEY` env var; validates request body structure based on `type` field.
 2. **Content construction:** Builds a `contentPart` — either `inlineData` (base64 audio with MIME type) or `text` (prefixed transcript).
 3. **Gemini invocation:** Instantiates `GoogleGenAI` per request, calls `ai.models.generateContent()` with:
-   - Model: `gemini-3-pro-preview`
+   - Model: `gemini-3.1-pro-preview`
    - System instruction: `CLARA_SYSTEM_INSTRUCTION` (detailed clinical bias analysis prompt)
    - Response MIME type: `application/json`
    - Response schema: structured `responseSchema` enforcing the `AuditFlag` shape

@@ -118,7 +118,7 @@ app.post('/api/analyze', async (req, res) => {
     try {
       const ai = new GoogleGenAI({ apiKey });
       const response = await ai.models.generateContent({
-        model: 'gemini-3-pro-preview',
+        model: 'gemini-3.1-pro-preview',
         contents: {
           parts: [
             contentPart,
