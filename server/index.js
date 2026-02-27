@@ -110,37 +110,50 @@ app.post('/api/analyze', async (req, res) => {
       ? { inlineData: { mimeType, data } }
       : { text: `TRANSCRIPT FOR ANALYSIS:\n\n${text}` };
 
-  try {
-    const ai = new GoogleGenAI({ apiKey });
-
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
-      contents: {
-        parts: [
-          contentPart,
-          {
-            text: 'Analyze this clinical consultation for cognitive biases according to the system instructions.',
-          },
-        ],
-      },
-      config: {
-        systemInstruction: CLARA_SYSTEM_INSTRUCTION,
-        responseMimeType: 'application/json',
-        responseSchema,
-        temperature: 0.2,
-      },
-    });
-
-    if (!response.text) {
-      return res.status(502).json({ error: 'No response received from Gemini.' });
+  // Retry mechanism with exponential backoff
+  const maxRetries = 4;
+  const baseDelay = 500; // ms
+  let lastError = null;
+  let response = null;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const ai = new GoogleGenAI({ apiKey });
+      response = await ai.models.generateContent({
+        model: 'gemini-3-pro-preview',
+        contents: {
+          parts: [
+            contentPart,
+            {
+              text: 'Analyze this clinical consultation for cognitive biases according to the system instructions.',
+            },
+          ],
+        },
+        config: {
+          systemInstruction: CLARA_SYSTEM_INSTRUCTION,
+          responseMimeType: 'application/json',
+          responseSchema,
+          temperature: 0.2,
+        },
+      });
+      if (response && response.text) {
+        const result = JSON.parse(response.text);
+        return res.json(result);
+      } else {
+        lastError = new Error('No response received from Gemini.');
+      }
+    } catch (error) {
+      lastError = error;
+      // Only retry on transient errors (network, 5xx, etc)
+      if (error.response && error.response.status && error.response.status < 500) {
+        break; // Do not retry on client errors
+      }
     }
-
-    const result = JSON.parse(response.text);
-    res.json(result);
-  } catch (error) {
-    console.error('Gemini Analysis Error:', error);
-    res.status(500).json({ error: error.message || 'Gemini analysis failed.' });
+    // Exponential backoff
+    const delay = baseDelay * Math.pow(2, attempt);
+    await new Promise(resolve => setTimeout(resolve, delay));
   }
+  console.error('Gemini Analysis Error:', lastError);
+  res.status(500).json({ error: lastError?.message || 'Gemini analysis failed.' });
 });
 
 // ─── Static frontend (production / Cloud Run) ─────────────────────────────────
