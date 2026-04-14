@@ -42,26 +42,31 @@ CLARA is built as an **"External System 2"**-a background AI ally powered by **G
    ```bash
    npm install
    ```
-3. Create a `.env` file from the example and set your Gemini API key:
+3. Create a `.env` file from the example and set your Google Cloud project details:
    ```bash
    cp .env.example .env
    ```
    ```env
-   GEMINI_API_KEY=your_key_here
+   GOOGLE_CLOUD_PROJECT=your-google-cloud-project-id
+   GOOGLE_CLOUD_LOCATION=us-central1
    ```
-4. Run the development server (Vite on `:3000` + Express on `:3001`):
+4. Authenticate locally with Application Default Credentials (ADC):
+   ```bash
+   gcloud auth application-default login
+   ```
+5. Run the development server (Vite on `:3000` + Express on `:3001`):
    ```bash
    npm run dev
    ```
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+6. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
 ## Deploying to Google Cloud Run
 
 The app is packaged as a single Docker container: the Express server serves the
-built Vite frontend and proxies all Gemini calls server-side, so the API key
-**never reaches the browser**.
+built Vite frontend and proxies all Gemini calls server-side, utilizing
+Application Default Credentials (ADC) to authenticate with Vertex AI.
 
 ### Prerequisites
 
@@ -77,30 +82,13 @@ gcloud run deploy clara \
   --region us-central1 \
   --platform managed \
   --allow-unauthenticated \
-  --set-env-vars GEMINI_API_KEY=your_key_here
+  --set-env-vars GOOGLE_CLOUD_PROJECT=your-google-cloud-project-id \
+  --set-env-vars GOOGLE_CLOUD_LOCATION=us-central1
 ```
 
 Cloud Run builds the container using the `Dockerfile`, then deploys it. The
-`GEMINI_API_KEY` is stored as a Cloud Run environment variable and is only
-accessible inside the container.
-
-### Optional: use Secret Manager instead of an env var
-
-For production, store the key in Secret Manager so it never appears in deploy
-logs or the Cloud Console UI:
-
-```bash
-# 1. Create the secret (one-time)
-echo -n "your_key_here" | gcloud secrets create GEMINI_API_KEY --data-file=-
-
-# 2. Deploy referencing the secret
-gcloud run deploy clara \
-  --source . \
-  --region us-central1 \
-  --platform managed \
-  --allow-unauthenticated \
-  --set-secrets GEMINI_API_KEY=GEMINI_API_KEY:latest
-```
+deployed service relies on the default compute service account for Application
+Default Credentials. Ensure that the service account has the **Vertex AI User** role.
 
 ### Manual build & push (optional)
 
@@ -117,7 +105,8 @@ gcloud run deploy clara \
   --region us-central1 \
   --platform managed \
   --allow-unauthenticated \
-  --set-env-vars GEMINI_API_KEY=your_key_here
+  --set-env-vars GOOGLE_CLOUD_PROJECT=your-google-cloud-project-id \
+  --set-env-vars GOOGLE_CLOUD_LOCATION=us-central1
 ```
 
 ---

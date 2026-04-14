@@ -148,10 +148,10 @@ No direct Gemini SDK usage exists on the client — all LLM calls are proxied th
 
 #### 5.2 API Endpoint — `POST /api/analyze`
 
-1. **Validation:** Checks for `GEMINI_API_KEY` env var; validates request body structure based on `type` field.
+1. **Validation:** Checks for `GOOGLE_CLOUD_PROJECT` env var; validates request body structure based on `type` field.
 2. **Content construction:** Builds a `contentPart` — either `inlineData` (base64 audio with MIME type) or `text` (prefixed transcript).
 3. **Gemini invocation:** Instantiates `GoogleGenAI` per request, calls `ai.models.generateContent()` with:
-   - Model: `gemini-3.1-pro-preview`
+   - Model: `gemini-2.5-pro`
    - System instruction: `CLARA_SYSTEM_INSTRUCTION` (detailed clinical bias analysis prompt)
    - Response MIME type: `application/json`
    - Response schema: structured `responseSchema` enforcing the `AuditFlag` shape
@@ -258,7 +258,8 @@ Multi-stage Dockerfile:
 ### 8.4 Google Cloud Run Deployment
 
 - **Source deploy:** `gcloud run deploy clara --source .` triggers Cloud Build to build the Docker image and deploy.
-- **Environment variable:** `GEMINI_API_KEY` passed via `--set-env-vars` or optionally stored in Secret Manager.
+- **Environment variables:** `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` passed via `--set-env-vars`.
+- **Authentication:** Relies on Application Default Credentials (ADC) attached to the Cloud Run service account, which must have the **Vertex AI User** role.
 - Unauthenticated access is allowed for the web UI.
 
 ### 8.5 Missing Tooling
@@ -273,9 +274,9 @@ Multi-stage Dockerfile:
 
 ## 9. Security Considerations
 
-### 9.1 API Key Protection
+### 9.1 Authentication & Credential Protection
 
-The architecture correctly keeps the `GEMINI_API_KEY` server-side. The React frontend never imports the AI SDK directly — all LLM calls route through `POST /api/analyze` on the Express server. In production, the key can be further secured via Google Cloud Secret Manager.
+The architecture correctly keeps AI interaction logic server-side. The React frontend never imports the AI SDK directly — all LLM calls route through `POST /api/analyze` on the Express server. In production, authentication with Vertex AI is seamlessly managed using Google Cloud's Application Default Credentials (ADC), eliminating the need for hardcoded API keys.
 
 ### 9.2 Input Validation
 

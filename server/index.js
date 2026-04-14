@@ -94,9 +94,11 @@ const responseSchema = {
 // ─── API endpoint ──────────────────────────────────────────────────────────────
 
 app.post('/api/analyze', async (req, res) => {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({ error: 'GEMINI_API_KEY is not configured on the server.' });
+  const projectId = process.env.GOOGLE_CLOUD_PROJECT;
+  const location = process.env.GOOGLE_CLOUD_LOCATION || 'us-central1';
+
+  if (!projectId) {
+    return res.status(500).json({ error: 'GOOGLE_CLOUD_PROJECT is not configured on the server.' });
   }
 
   const { type, data, mimeType, text } = req.body;
@@ -116,10 +118,11 @@ app.post('/api/analyze', async (req, res) => {
   let lastError = null;
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
-      const ai = new GoogleGenAI({ apiKey });
+      const ai = new GoogleGenAI({ vertexai: true, project: projectId, location });
       const response = await ai.models.generateContent({
-        model: 'gemini-3.1-pro-preview',
+        model: 'gemini-2.5-pro',
         contents: {
+          role: 'user',
           parts: [
             contentPart,
             {
